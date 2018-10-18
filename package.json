@@ -1,0 +1,11 @@
+{
+  "name": "serenityTestBed",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "tsc & ./node_modules/cucumber/bin/cucumber-js -r dist/**/*.js"
+  },
+  "dependencies": {
+    "@types/cucumber": "^4.0.4",
+    "cucumber": "^5.0.2"
+  }
+}
