@@ -24,6 +24,7 @@ export class WebCalculator{
         const wd = WebCalculator.driver;
 
         return new Promise(async (fulfill, reject) => {
+
             await wd.get('http://www.google.com');
             await wd.wait(until.elementLocated(By.name('q')));
             await wd.findElement(By.name('q')).sendKeys('calculator');

@@ -1,8 +1,8 @@
 import { BeforeAll, AfterAll, Given, When, Then } from "cucumber";
-import {Calculator} from "../../libs/Calculator";
 import * as assert from 'assert';
-import {WebCalculator} from "../../libs/WebCalculator";
-import {I_StaticCalculator} from "../../libs/I_StaticCalculator";
+import {I_StaticCalculator} from "../../../framework/scr/I_StaticCalculator";
+import {WebCalculator} from "../../../framework/scr/WebCalculator";
+import {Calculator} from "../../../framework/scr/Calculator";
 
 
 
