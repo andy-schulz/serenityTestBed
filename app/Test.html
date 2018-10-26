@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./PageCode.js"></script>
+</head>
+<body>
+<div class="box">BOX 1</div>
+<div class="box">BOX 2</div>
+<div class="box">BOX 4</div>
+
+<script>
+    console.log("NEW");
+    let searchString = '__REGEXP__' + (/BOX/).toString();
+    let testMatches = testfunc(".box", searchString);
+    console.log(testMatches)
+</script>
+
+</body>
+</html>
