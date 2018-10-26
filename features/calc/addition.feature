@@ -13,8 +13,8 @@ Feature: Addition
     |1      |2      |3         |
     |3      |4      |7         |
     |-10    |15     |5         |
-#    |-10    |-10    |-20       |
-#    |10     |-10    |0         |
+    |-10    |-10    |-20       |
+    |10     |-10    |0         |
 
   Scenario Outline: Add two number
     Given a Calculator is used
