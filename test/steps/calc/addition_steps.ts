@@ -20,8 +20,8 @@ class CalculationData {
     }
 }
 
-AfterAll(function () {
-    return calculator.cleanup();
+AfterAll(async () => {
+    return await WebCalculator.cleanup()
 });
 
 Given('a WebCalculator is used', async () => {

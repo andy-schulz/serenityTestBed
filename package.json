@@ -9,6 +9,7 @@
     "@types/node": "^10.12.0",
     "cucumber": "^5.0.2",
     "protractor": "^5.4.1",
-    "selenium-webdriver": "^4.0.0-alpha.1"
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "thekla": "git+https://github.com/andy-schulz/thekla.git"
   }
 }
