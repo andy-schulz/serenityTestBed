@@ -1,73 +1,69 @@
-import {BrowserFactory, until, By, Config, Browser, Key, WebElementFinder} from "thekla";
-import {Utils} from "thekla/dist/src/utils/Utils";
-import {GoogleCalculator} from "./po/GoogleCalculator";
-import {GoogleSearch} from "./po/GoogleSearch";
+import * as assert        from "assert";
+import {
+    BrowserFactory, Config,
+    Actor, BrowseTheWeb,
+    Navigate, Enter, Wait, Text, See,
+    Key
+}                         from "thekla";
+import {GoogleCalculator} from "./lib/GoogleCalculator";
+import {GoogleSearch}     from "./lib/GoogleSearch";
+import {Add}              from "./lib/Tasks/Add";
 
+
+let castMap = new Map<string, Actor>();
 
 export class WebCalculator{
+
+    static create(actorName: string) {
+        return new WebCalculator(actorName);
+    }
+
     private static config: Config = {
-        browserName: "firefox",
+        browserName: "chrome",
         serverUrl: "http://localhost:4444/wd/hub",
-        firefoxOptions: {
-            binary: "C:\\PProgramme\\FirefoxPortable\\App\\Firefox\\firefox.exe",
-            proxy: {
-                proxyType: "direct"
-            }
-        }
+        // firefoxOptions: {
+        //     binary: "C:\\PProgramme\\FirefoxPortable\\App\\Firefox\\firefox.exe",
+        //     proxy: {
+        //         proxyType: "direct"
+        //     }
+        // }
     };
 
-    private static browser: Browser;
+    private theActor: Actor;
 
-    static async init() {
-
-        if(WebCalculator.browser === undefined) {
-            return new Promise(async (fulfill, reject) => {
-                await BrowserFactory.create(WebCalculator.config, "wdjs")
-                    .then((browser: Browser) => {
-                        WebCalculator.browser = browser;
-                        fulfill();
-                    });
-            })
-        } else {
-            return Promise.resolve();
+    constructor(private actorName: string) {
+        if(castMap.has(actorName)) {
+            this.theActor = <Actor>castMap.get(actorName);
+            return;
         }
+        this.theActor = Actor.named(actorName);
+        this.theActor.whoCan(BrowseTheWeb.using(BrowserFactory.create(WebCalculator.config)));
+        castMap.set(actorName, this.theActor);
     }
 
-    static add(x: number, y: number): Promise<number> {
-        return new Promise(async (fulfill, reject) => {
-            await WebCalculator.init();
-            const b = WebCalculator.browser;
-            const gc = new GoogleCalculator(b);
-
-            await b.wait(until(() => gc.input.isVisible()));
-            await Utils.wait(300);
-
-            await gc.enterNumber(x);
-            await gc.plus.click();
-            await gc.enterNumber(y);
-            await gc.res.click();
-
-
-            // await input.sendKeys(`${x}+${y}`);
-            // await result.click();
-            const value = Number.parseInt(await gc.input.getText());
-            fulfill(value);
-        });
+    async loadCalculator(): Promise<void> {
+        return await this.theActor.attemptsTo(
+            Navigate.to("https://www.google.de"),
+            Enter.value("calculator").into(GoogleSearch.searchField),
+            Enter.value(Key.ENTER).into(GoogleSearch.searchField),
+            Wait.for(500),
+        );
     }
 
-    static loadCalculator(): Promise<void> {
-        return new Promise(async (fulfill, reject) => {
-            await WebCalculator.init();
-            const b = WebCalculator.browser;
-            const gs = new GoogleSearch(b);
+    add(x: number, y: number): Promise<number> {
+        return this.theActor
+            .attemptsTo(
+                Add.number(x).to(y),
+                Wait.for(500))
+            .then(() => {return 4;});
+    }
 
-            await b.get('http://www.google.com');
-            await b.wait(until(() => gs.searchField.isVisible()));
-            await gs.searchField.sendKeys('calculator');
-            await gs.searchField.sendKeys(Key.ENTER);
-            await b.wait(until(() => b.hasTitle('calculator - Google-Suche')), 1000);
-            fulfill();
-        });
+    check(expected: string) {
+        const matcher = (actual: string) => {assert.strictEqual(actual,expected); return};
+
+        return this.theActor.attemptsTo(
+            See.if(Text.of(GoogleCalculator.input)).fulfills(matcher)
+        )
     }
 
     static cleanup(): Promise<void> {
